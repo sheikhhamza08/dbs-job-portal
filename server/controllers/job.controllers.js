@@ -57,5 +57,3 @@ export const postJob = async (req, res) => {
     console.log(error);
   }
 };
-
-
