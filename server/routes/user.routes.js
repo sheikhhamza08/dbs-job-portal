@@ -1,7 +1,12 @@
 import express from "express";
-import { login, logout, register } from "../controllers/user.controllers.js";
-import { singleUpload } from "../middleware/multer.js";
-import authUser from "../middleware/authUser.js";
+import {
+  login,
+  logout,
+  register,
+  updateProfile,
+} from "../controllers/user.controllers.js";
+import { singleUpload } from "../middlewares/multer.js";
+import authUser from "../middlewares/authUser.js";
 
 const userRouter = express.Router();
 
