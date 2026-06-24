@@ -51,3 +51,47 @@ export const applyJob = async (req, res) => {
     console.log(error);
   }
 };
+
+// for role === "student"
+export const getAppliedJobs = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    const application = await Application.find({ applicant: userId })
+      .sort({ createdAt: -1 })
+      .populate({
+        path: "job",
+        options: { sort: { createdAt: -1 } },
+        populate: {
+          path: "company",
+          options: { sort: { createdAt: -1 } },
+        },
+      });
+
+    if (!application) {
+      return res.status(404).json({
+        message: "No jobs applied",
+        success: false,
+      });
+    }
+
+    // Filter out applications where job is (deleted)
+    const validApplications = application.filter((app) => app.job !== null);
+
+    if (validApplications.length === 0) {
+      return res.status(404).json({
+        message: "No active application found",
+        success: false,
+      });
+    }
+
+    return res.status(200).json({
+      validApplications,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
