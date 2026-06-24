@@ -122,3 +122,27 @@ export const getApplicants = async (req, res) => {
   }
 };
 
+// role === "recruiter"
+export const updateStatus = async (req, res) => {
+  try {
+    const { status } = req.body;
+    const applicationId = req.params.id;
+    if (!status) {
+      return res.status(404).json({
+        message: "Status is required",
+        success: false,
+      });
+    }
+
+    const application = await Application.findByIdAndUpdate(applicationId, {
+      status: status.toLowerCase(),
+    });
+    return res.status(200).json({
+      message: "Status updated successfully",
+
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
