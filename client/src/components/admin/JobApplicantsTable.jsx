@@ -14,7 +14,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { APPLICANT_API_END_POINT } from "@/utils/constant";
-import { getResumeUrl } from "@/utils/resumeUrl";
+import { getResumeDownloadUrl } from "@/utils/resumeUrl";
 
 const shortListingStatus = ["Accepted", "Rejected"];
 
@@ -66,7 +66,7 @@ const JobApplicantsTable = () => {
                   {item?.applicant?.profile?.resume ? (
                     <a
                       className="hover:text-[#002855] cursor-pointer font-medium"
-                      href={getResumeUrl(item.applicant?.profile?.resume)}
+                      href={getResumeDownloadUrl(item.applicant?._id)}
                       download={
                         item.applicant?.profile?.resumeOriginalName ||
                         "resume.pdf"

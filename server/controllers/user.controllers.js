@@ -3,10 +3,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+import { Application } from "../models/application.model.js";
 import {
   normalizeResumeUrl,
   sanitizeUserProfile,
   uploadResumeToCloudinary,
+  getSignedResumeUrl,
 } from "../utils/resumeUrl.js";
 
 const formatUserResponse = (userDoc) => {
@@ -210,6 +212,65 @@ export const getMe = async (req, res) => {
       user: formatUserResponse(user),
       success: true,
     });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
+  }
+};
+
+const canAccessResume = async (requesterId, targetUserId) => {
+  if (requesterId.toString() === targetUserId.toString()) {
+    return true;
+  }
+
+  const requester = await User.findById(requesterId).select("role");
+  if (requester?.role !== "recruiter") {
+    return false;
+  }
+
+  const application = await Application.findOne({
+    applicant: targetUserId,
+  }).populate({
+    path: "job",
+    select: "created_by",
+  });
+
+  if (!application?.job) {
+    return false;
+  }
+
+  return application.job.created_by?.toString() === requesterId.toString();
+};
+
+export const downloadResume = async (req, res) => {
+  try {
+    const targetUserId = req.params.userId || req.id;
+    const allowed = await canAccessResume(req.id, targetUserId);
+
+    if (!allowed) {
+      return res.status(403).json({
+        message: "Not authorized to view this resume",
+        success: false,
+      });
+    }
+
+    const user = await User.findById(targetUserId).select(
+      "profile.resume profile.resumeOriginalName",
+    );
+
+    if (!user?.profile?.resume) {
+      return res.status(404).json({
+        message: "Resume not found",
+        success: false,
+      });
+    }
+
+    const signedUrl = getSignedResumeUrl(user.profile.resume);
+
+    return res.redirect(signedUrl);
   } catch (error) {
     console.log(error);
     return res.status(500).json({

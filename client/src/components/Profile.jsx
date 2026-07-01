@@ -11,7 +11,7 @@ import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAppliedJobs";
 import Footer from "./shared/Footer";
 import { motion } from "framer-motion";
-import { getResumeUrl } from "@/utils/resumeUrl";
+import { getResumeDownloadUrl } from "@/utils/resumeUrl";
 const skills = ["HTML", "CSS", "JAVASCRIPT", "REACTJS"];
 
 function Profile() {
@@ -96,7 +96,7 @@ function Profile() {
                   target="_blank"
                   rel="noopener noreferrer"
                   download={user?.profile?.resumeOriginalName || "resume.pdf"}
-                  href={getResumeUrl(user?.profile?.resume)}
+                  href={getResumeDownloadUrl(user?._id)}
                   className="text-[#002855] w-full hover:underline cursor-pointer font-medium"
                 >
                   {user?.profile?.resumeOriginalName || "View resume (PDF)"}

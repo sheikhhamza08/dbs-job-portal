@@ -1,4 +1,5 @@
 import path from "path";
+import cloudinary from "./cloudinary.js";
 
 /**
  * PDFs must use Cloudinary "raw" delivery, not /image/upload/.
@@ -28,7 +29,33 @@ export const normalizeResumeUrl = (url) => {
   return fixed;
 };
 
-export const uploadResumeToCloudinary = async (cloudinary, fileUri, file) => {
+export const extractPublicIdFromResumeUrl = (url) => {
+  const normalized = normalizeResumeUrl(url);
+  const match = normalized.match(/\/upload\/(?:s--[^/]+--\/)?(?:v\d+\/)?(.+?)(?:\?|#|$)/i);
+
+  if (!match?.[1]) return null;
+
+  return decodeURIComponent(match[1]);
+};
+
+/**
+ * Cloudinary accounts with strict PDF delivery require signed URLs (HTTP 401 otherwise).
+ */
+export const getSignedResumeUrl = (storedUrl) => {
+  if (!storedUrl || typeof storedUrl !== "string") return storedUrl;
+
+  const publicId = extractPublicIdFromResumeUrl(storedUrl);
+  if (!publicId) return normalizeResumeUrl(storedUrl);
+
+  return cloudinary.url(publicId, {
+    resource_type: "raw",
+    type: "upload",
+    sign_url: true,
+    secure: true,
+  });
+};
+
+export const uploadResumeToCloudinary = async (cloudinaryClient, fileUri, file) => {
   const isPdf =
     file.mimetype === "application/pdf" ||
     file.originalname?.toLowerCase().endsWith(".pdf");
@@ -39,18 +66,18 @@ export const uploadResumeToCloudinary = async (cloudinary, fileUri, file) => {
       "resume";
     const safeName = baseName.replace(/[^a-zA-Z0-9-_]/g, "_").slice(0, 40);
 
-    return cloudinary.uploader.upload(fileUri.content, {
+    return cloudinaryClient.uploader.upload(fileUri.content, {
       resource_type: "raw",
+      type: "upload",
       folder: "user-resumes",
       public_id: `${safeName}_${Date.now()}.pdf`,
-      access_mode: "public",
     });
   }
 
-  return cloudinary.uploader.upload(fileUri.content, {
+  return cloudinaryClient.uploader.upload(fileUri.content, {
     resource_type: "auto",
+    type: "upload",
     folder: "user-resumes",
-    access_mode: "public",
   });
 };
 
@@ -60,7 +87,7 @@ export const sanitizeUserProfile = (user) => {
   const plain = user.toObject ? user.toObject() : { ...user };
 
   if (plain.profile?.resume) {
-    plain.profile.resume = normalizeResumeUrl(plain.profile.resume);
+    plain.profile.resume = getSignedResumeUrl(plain.profile.resume);
   }
 
   return plain;

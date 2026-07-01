@@ -1,6 +1,6 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
-import { normalizeResumeUrl } from "../utils/resumeUrl.js";
+import { getSignedResumeUrl } from "../utils/resumeUrl.js";
 
 const sanitizeJobApplicants = (job) => {
   if (!job?.applications) return job;
@@ -9,7 +9,7 @@ const sanitizeJobApplicants = (job) => {
 
   plain.applications = plain.applications.map((application) => {
     if (application?.applicant?.profile?.resume) {
-      application.applicant.profile.resume = normalizeResumeUrl(
+      application.applicant.profile.resume = getSignedResumeUrl(
         application.applicant.profile.resume,
       );
     }
