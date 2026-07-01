@@ -11,6 +11,9 @@ export const JOB_FILTER_OPTIONS = [
       "Full Stack Developer",
       "Data Scientist",
       "Machine Learning",
+      "DevOps Engineer",
+      "Cyber Security",
+      "Graphic Designer",
     ],
   },
   {

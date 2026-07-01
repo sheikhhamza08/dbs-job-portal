@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAppliedJobs";
 import Footer from "./shared/Footer";
 import { motion } from "framer-motion";
+import { getResumeUrl } from "@/utils/resumeUrl";
 const skills = ["HTML", "CSS", "JAVASCRIPT", "REACTJS"];
 
 function Profile() {
@@ -92,11 +93,12 @@ function Profile() {
               <Label className="text-md font-bold">Resume</Label>
               {user?.profile?.resume ? (
                 <a
-                  target="blank"
-                  href={user?.profile?.resume}
-                  className="text-blue-500 w-full hover:underline cursor-pointer"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href={getResumeUrl(user?.profile?.resume)}
+                  className="text-[#002855] w-full hover:underline cursor-pointer font-medium"
                 >
-                  {user?.profile?.resumeOriginalName}
+                  {user?.profile?.resumeOriginalName || "View resume (PDF)"}
                 </a>
               ) : (
                 <span>NA</span>

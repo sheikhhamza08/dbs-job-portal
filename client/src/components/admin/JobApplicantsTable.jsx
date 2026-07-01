@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { APPLICANT_API_END_POINT } from "@/utils/constant";
+import { getResumeUrl } from "@/utils/resumeUrl";
 
 const shortListingStatus = ["Accepted", "Rejected"];
 
@@ -64,11 +65,12 @@ const JobApplicantsTable = () => {
                 <TableCell>
                   {item?.applicant?.profile?.resume ? (
                     <a
-                      className="hover:text-blue-600 cursor-pointer"
-                      href={item.applicant?.profile?.resume}
+                      className="hover:text-[#002855] cursor-pointer font-medium"
+                      href={getResumeUrl(item.applicant?.profile?.resume)}
                       target="_blank"
+                      rel="noopener noreferrer"
                     >
-                      {item.applicant?.profile?.resumeOriginalName}
+                      {item.applicant?.profile?.resumeOriginalName || "View PDF"}
                     </a>
                   ) : (
                     <span>NA</span>
