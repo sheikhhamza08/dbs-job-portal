@@ -24,15 +24,15 @@ const FilterCard = () => {
     }, [selectedValue])
 
     return (
-        <div className='w-full bg-white py-3 rounded-md'>
-            <h1 className='font-bold text-lg'>Filter Jobs</h1>
-            <hr className='mt-3' />
+        <div className='w-full bg-white py-4 px-4 rounded-2xl border border-gray-100 shadow-sm'>
+            <h1 className='font-bold text-lg text-[#002855]'>Filter Jobs</h1>
+            <hr className='mt-3 mb-2 border-gray-100' />
 
             <RadioGroup value={selectedValue} onValueChange={changeHandler}>
                 {
                     JOB_FILTER_OPTIONS.map((data, index) => (
                         <div key={data.filterType}>
-                            <h1 className='font-bold text-lg'>{data.filterType}</h1>
+                            <h1 className='font-semibold text-sm text-[#002855]/70 uppercase tracking-wide mt-3 mb-1'>{data.filterType}</h1>
                             {
                                 data.array.map((item, idx) => {
                                     const itemId = `${data.filterType}-${idx}`

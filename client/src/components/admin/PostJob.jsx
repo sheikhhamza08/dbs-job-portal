@@ -4,21 +4,22 @@ import { Label } from '../ui/label'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useNavigate } from 'react-router-dom'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import axios from 'axios'
 import { JOB_API_END_POINT } from '@/utils/constant'
 import { toast } from 'sonner'
 import { Loader2 } from 'lucide-react'
+import useGetAllCompanies from '@/hooks/useGetAllCompanies'
 
 
 
 
 const PostJob = () => {
 
+    useGetAllCompanies();
     const { companies } = useSelector(store => store.company)
     const navigate = useNavigate();
-    const dispatch = useDispatch();
 
 
     const [loading, setLoading] = useState(false);
@@ -115,7 +116,7 @@ const PostJob = () => {
                                 type="number"
                                 name="salary"
                                 value={input.salary}
-                                placeholder="Write in LPA"
+                                placeholder="e.g. 45 (thousands EUR per year)"
                                 onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />
@@ -126,7 +127,7 @@ const PostJob = () => {
                                 type="text"
                                 name="location"
                                 value={input.location}
-                                placeholder="Job Loaction"
+                                placeholder="e.g. Dublin, Cork, Galway"
                                 onChange={changeEventHandler}
                                 className="focus-visible:ring-offset-0 focus-visible:ring-0 my-1"
                             />

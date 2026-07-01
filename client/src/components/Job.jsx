@@ -4,10 +4,10 @@ import { Bookmark } from "lucide-react";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { useNavigate } from "react-router-dom";
+import { MapPin } from "lucide-react";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
-  // const jobId = "e8ut7yt845y95y56";
 
   const daysAgoFunction = (mongodbTime) => {
     const createdAt = new Date(mongodbTime);
@@ -18,63 +18,66 @@ const Job = ({ job }) => {
   };
 
   return (
-    <div className="p-5 rounded-md shadow-xl bg-white border border-gray-100 hover:scale-105 transition-all duration-500 h-full flex flex-col">
+    <div className="p-5 rounded-2xl shadow-sm bg-white border border-gray-100 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 h-full flex flex-col">
       <div className="flex justify-between items-center">
-        <p className="text-sm text-gray-500">
+        <p className="text-xs text-muted-foreground">
           {daysAgoFunction(job?.createdAt) === 0
             ? "Today"
             : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
         <Button variant="outline" className="rounded-full" size="icon">
-          <Bookmark />
+          <Bookmark className="h-4 w-4" />
         </Button>
       </div>
 
-      <div className="flex gap-2 items-center my-2">
-        <Button variant="outline" size="icon" className="p-6">
-          <Avatar>
-            <AvatarImage
-              src={
-                job?.company?.logo ||
-                "https://th.bing.com/th/id/OIP.NU9zscMHAn83CpLA9fDjrgHaHa?rs=1&pid=ImgDetMain"
-              }
-            />
-          </Avatar>
-        </Button>
+      <div className="flex gap-3 items-center my-3">
+        <Avatar className="h-12 w-12 rounded-xl">
+          <AvatarImage
+            src={
+              job?.company?.logo ||
+              "https://ui-avatars.com/api/?name=Co&background=002855&color=fff"
+            }
+          />
+        </Avatar>
         <div>
-          <h1 className="font-medium text-lg md:text-xl">
+          <h2 className="font-semibold text-[#002855]">
             {job?.company?.companyName}
-          </h1>
-          <p className="text-sm text-gray-600">{job?.company?.location}</p>
+          </h2>
+          <p className="text-xs text-muted-foreground flex items-center gap-1">
+            <MapPin className="h-3 w-3" />
+            {job?.location}
+          </p>
         </div>
       </div>
 
-      <div className="">
-        <h1 className="font-bold text-lg my-2 ">{job?.title}</h1>
-        <p className="text-sm text-gray-600">{job?.description}</p>
-      </div>
+      <h3 className="font-bold text-lg mb-1">{job?.title}</h3>
+      <p className="text-sm text-muted-foreground line-clamp-2 flex-1">
+        {job?.description}
+      </p>
 
-      <div className="flex items-center gap-2 mt-4">
-        <Badge className="text-blue-700 font-bold" variant="ghost">
+      <div className="flex flex-wrap items-center gap-2 mt-4">
+        <Badge className="bg-[#002855]/5 text-[#002855]" variant="secondary">
           {job?.position} positions
         </Badge>
-        <Badge className="text-[#F83002] font-bold" variant="ghost">
+        <Badge className="bg-orange-50 text-orange-700" variant="secondary">
           {job?.jobType}
         </Badge>
-        <Badge className="text-[#7209b7] font-bold" variant="ghost">
-          €{job?.salary}
+        <Badge className="bg-[#c5a572]/15 text-[#8a6d3b]" variant="secondary">
+          €{job?.salary}k
         </Badge>
       </div>
 
-      <div className="flex items-center gap-4 mt-4">
+      <div className="flex items-center gap-3 mt-4">
         <Button
-          className="cursor-pointer"
+          className="cursor-pointer flex-1 border-[#002855]/20 text-[#002855]"
           onClick={() => navigate(`/description/${job._id}`)}
           variant="outline"
         >
           Details
         </Button>
-        <Button className="bg-[#7209b7] cursor-pointer">Save For Later</Button>
+        <Button className="bg-[#002855] hover:bg-[#1a4480] cursor-pointer flex-1">
+          Save
+        </Button>
       </div>
     </div>
   );

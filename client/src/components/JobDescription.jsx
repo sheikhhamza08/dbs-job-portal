@@ -16,7 +16,9 @@ const JobDescription = () => {
 
   const isInitiallyApplied =
     singleJob?.applications?.some(
-      (application) => application.applicant === user?._id,
+      (application) =>
+        application.applicant?._id?.toString() === user?._id?.toString() ||
+        application.applicant?.toString() === user?._id?.toString(),
     ) || false;
 
   const [isApplied, setIsApplied] = useState(isInitiallyApplied);
@@ -60,7 +62,9 @@ const JobDescription = () => {
           dispatch(setSingleJob(response.data.job));
           setIsApplied(
             response.data.job.applications.some(
-              (application) => application.applicant === user?._id,
+              (application) =>
+                application.applicant?._id?.toString() === user?._id?.toString() ||
+                application.applicant?.toString() === user?._id?.toString(),
             ),
           );
         }
@@ -85,15 +89,15 @@ const JobDescription = () => {
               <Badge className="text-[#F83002] font-bold" variant="ghost">
                 {singleJob?.jobType} position
               </Badge>
-              <Badge className="text-[#7209b7] font-bold" variant="ghost">
-                {singleJob?.salary} LPA
+              <Badge className="text-[#c5a572] font-bold bg-[#c5a572]/10" variant="ghost">
+                €{singleJob?.salary}k
               </Badge>
             </div>
           </div>
           <Button
             onClick={isApplied ? null : applyJobHandler}
             disabled={isApplied}
-            className={`rounded-lg ${isApplied ? "bg-gray-600 cursor-not-allowed" : "bg-[#7209b7] hover:bg-[#5f08ad] cursor-pointer"} `}
+            className={`rounded-lg ${isApplied ? "bg-gray-400 cursor-not-allowed" : "bg-[#002855] hover:bg-[#1a4480] cursor-pointer"} `}
           >
             {isApplied ? "Applied" : "Apply Now"}
           </Button>
@@ -132,7 +136,7 @@ const JobDescription = () => {
           <h1 className="font-bold my-1">
             Salary:{" "}
             <span className="pl-4 font-normal text-gray-800">
-              {singleJob?.salary} LPA
+              €{singleJob?.salary}k per year
             </span>
           </h1>
           <h1 className="font-bold my-1">
