@@ -3,6 +3,23 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import getDataUri from "../utils/datauri.js";
 import cloudinary from "../utils/cloudinary.js";
+import {
+  normalizeResumeUrl,
+  sanitizeUserProfile,
+  uploadResumeToCloudinary,
+} from "../utils/resumeUrl.js";
+
+const formatUserResponse = (userDoc) => {
+  const user = sanitizeUserProfile(userDoc);
+  return {
+    _id: user._id,
+    fullname: user.fullname,
+    email: user.email,
+    phoneNumber: user.phoneNumber,
+    role: user.role,
+    profile: user.profile,
+  };
+};
 
 export const register = async (req, res) => {
   try {
@@ -93,26 +110,19 @@ export const login = async (req, res) => {
       expiresIn: "1d",
     });
 
-    user = {
-      _id: user._id,
-      fullname: user.fullname,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      role: user.role,
-      profile: user.profile,
-    };
+    const isProduction = process.env.NODE_ENV === "production";
 
     return res
       .status(200)
       .cookie("token", token, {
         maxAge: 1 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: "none",
-        secure: true,
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction,
       })
       .json({
         message: `Welcome back ${user.fullname}`,
-        user,
+        user: formatUserResponse(user),
         success: true,
       });
   } catch (error) {
@@ -140,11 +150,11 @@ export const updateProfile = async (req, res) => {
 
     if (file) {
       const fileUri = getDataUri(file);
-      cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
-        resource_type: "auto",
-        folder: "user-resumes",
-        access_mode: "public",
-      });
+      cloudResponse = await uploadResumeToCloudinary(
+        cloudinary,
+        fileUri,
+        file,
+      );
     }
 
     let skillsArray;
@@ -170,24 +180,15 @@ export const updateProfile = async (req, res) => {
 
     // ✅ save secure_url as-is, no replacement
     if (file && cloudResponse) {
-      user.profile.resume = cloudResponse.secure_url;
+      user.profile.resume = normalizeResumeUrl(cloudResponse.secure_url);
       user.profile.resumeOriginalName = file.originalname;
     }
 
     await user.save();
 
-    user = {
-      _id: user._id,
-      fullname: user.fullname,
-      email: user.email,
-      phoneNumber: user.phoneNumber,
-      role: user.role,
-      profile: user.profile,
-    };
-
     return res.status(200).json({
       message: "Profile updated",
-      user,
+      user: formatUserResponse(user),
       success: true,
     });
   } catch (error) {
@@ -195,27 +196,25 @@ export const updateProfile = async (req, res) => {
   }
 };
 
-// role === "student"
-export const getJobById = async (req, res) => {
+export const getMe = async (req, res) => {
   try {
-    const jobId = req.params.id;
-
-    const job = await Job.findById(jobId).populate({
-      path: "applications",
-    });
-    if (!job) {
-      res.status(404).json({
-        message: "Job not found",
+    const user = await User.findById(req.id).select("-password");
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
         success: false,
       });
     }
 
     return res.status(200).json({
-      message: "Job found",
-      job,
+      user: formatUserResponse(user),
       success: true,
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };

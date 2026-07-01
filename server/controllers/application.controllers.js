@@ -1,5 +1,23 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
+import { normalizeResumeUrl } from "../utils/resumeUrl.js";
+
+const sanitizeJobApplicants = (job) => {
+  if (!job?.applications) return job;
+
+  const plain = job.toObject ? job.toObject() : { ...job };
+
+  plain.applications = plain.applications.map((application) => {
+    if (application?.applicant?.profile?.resume) {
+      application.applicant.profile.resume = normalizeResumeUrl(
+        application.applicant.profile.resume,
+      );
+    }
+    return application;
+  });
+
+  return plain;
+};
 
 // for role === "student"
 export const applyJob = async (req, res) => {
@@ -27,9 +45,9 @@ export const applyJob = async (req, res) => {
 
     // check if the job exists
     const job = await Job.findById(jobId);
-    if (!jobId) {
+    if (!job) {
       return res.status(404).json({
-        message: "Job not exists",
+        message: "Job not found",
         success: false,
       });
     }
@@ -68,25 +86,10 @@ export const getAppliedJobs = async (req, res) => {
         },
       });
 
-    if (!application) {
-      return res.status(404).json({
-        message: "No jobs applied",
-        success: false,
-      });
-    }
-
-    // Filter out applications where job is (deleted)
     const validApplications = application.filter((app) => app.job !== null);
 
-    if (validApplications.length === 0) {
-      return res.status(404).json({
-        message: "No active application found",
-        success: false,
-      });
-    }
-
     return res.status(200).json({
-      validApplications,
+      applications: validApplications,
       success: true,
     });
   } catch (error) {
@@ -114,7 +117,7 @@ export const getApplicants = async (req, res) => {
     }
 
     return res.status(200).json({
-      job,
+      job: sanitizeJobApplicants(job),
       success: true,
     });
   } catch (error) {
