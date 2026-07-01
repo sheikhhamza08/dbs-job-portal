@@ -18,15 +18,20 @@ import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
   key: "root",
-  version: 2,
+  version: 3,
   storage,
   migrate: (state) =>
     Promise.resolve({
       ...state,
       job: {
         ...state?.job,
+        allJobs: state?.job?.allJobs ?? [],
+        allAdminJobs: state?.job?.allAdminJobs ?? [],
+        allAppliedJobs: state?.job?.allAppliedJobs ?? [],
         savedJobs: state?.job?.savedJobs ?? [],
         savedJobIds: state?.job?.savedJobIds ?? [],
+        searchJobByText: state?.job?.searchJobByText ?? "",
+        searchedQuery: state?.job?.searchedQuery ?? "",
       },
     }),
 };

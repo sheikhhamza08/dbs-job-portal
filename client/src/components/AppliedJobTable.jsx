@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux';
 
 const AppliedJobTable = () => {
 
-    const { allAppliedJobs } = useSelector(store => store.job);
+    const { allAppliedJobs = [] } = useSelector(store => store.job);
 
     return (
         <div>
@@ -26,11 +26,14 @@ const AppliedJobTable = () => {
                 </TableHeader>
                 <TableBody>
                     {
-                        !allAppliedJobs &&
-                        <span className='text-sm hover:text-fuchsia-400'>You haven't applied to any jobs yet.</span>
-                    }
-                    {
-                        allAppliedJobs.length >= 0 && allAppliedJobs?.map((item, index) => (
+                        allAppliedJobs.length === 0 ? (
+                        <TableRow>
+                            <TableCell colSpan={4} className='text-sm text-muted-foreground'>
+                                You haven't applied to any jobs yet.
+                            </TableCell>
+                        </TableRow>
+                        ) : (
+                        allAppliedJobs.map((item, index) => (
                             <TableRow key={index}>
                                 <TableCell>{item?.createdAt.split("T")[0]}</TableCell>
                                 <TableCell>{item?.job?.title}</TableCell>
@@ -38,6 +41,7 @@ const AppliedJobTable = () => {
                                 <TableCell className="text-right"><Badge className={`${item.status === "rejected" ? 'bg-red-400' : item.status === "pending" ? 'bg-gray-400' : 'bg-green-400'}`}>{item?.status.toUpperCase()}</Badge></TableCell>
                             </TableRow>
                         ))
+                        )
                     }
                 </TableBody>
             </Table>

@@ -48,11 +48,12 @@ const matchesSalaryRange = (salary, rangeLabel) => {
 };
 
 export const filterJobsByQuery = (jobs, query) => {
-  if (!query?.trim()) return jobs;
+  const safeJobs = jobs ?? [];
+  if (!query?.trim()) return safeJobs;
 
   const selected = query.trim();
 
-  return jobs.filter((job) => {
+  return safeJobs.filter((job) => {
     if (LOCATIONS.has(selected)) {
       return job?.location?.toLowerCase().includes(selected.toLowerCase());
     }
