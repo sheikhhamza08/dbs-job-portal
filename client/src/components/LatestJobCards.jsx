@@ -2,6 +2,7 @@ import React from "react";
 import { Badge } from "./ui/badge";
 import { useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
+import SaveJobButton from "./SaveJobButton";
 
 function LatestJobCards({ job }) {
   const navigate = useNavigate();
@@ -9,8 +10,14 @@ function LatestJobCards({ job }) {
   return (
     <div
       onClick={() => navigate(`/description/${job._id}`)}
-      className="group p-6 rounded-2xl bg-white border border-gray-100 shadow-sm cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
+      className="group p-6 rounded-2xl bg-white border border-gray-100 shadow-sm cursor-pointer hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative"
     >
+      <div
+        className="absolute top-4 right-4 z-10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <SaveJobButton jobId={job._id} iconOnly />
+      </div>
       <div className="flex items-center gap-3 mb-4">
         <img
           src={

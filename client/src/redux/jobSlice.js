@@ -9,6 +9,8 @@ const jobSlice = createSlice({
         searchJobByText: "",
         allAppliedJobs: [],
         searchedQuery: "",
+        savedJobs: [],
+        savedJobIds: [],
     },
     reducers: {
         // actions
@@ -30,6 +32,30 @@ const jobSlice = createSlice({
         setSearchedQuery: (state, action) => {
             state.searchedQuery = action.payload;
         },
+        setSavedJobs: (state, action) => {
+            const jobs = action.payload ?? [];
+            state.savedJobs = jobs;
+            state.savedJobIds = jobs.map((job) => job._id?.toString());
+        },
+        setSavedJobIds: (state, action) => {
+            state.savedJobIds = action.payload ?? [];
+        },
+        addSavedJobId: (state, action) => {
+            const jobId = action.payload?.toString();
+            const ids = state.savedJobIds ?? [];
+            if (!ids.some((id) => id?.toString() === jobId)) {
+                state.savedJobIds = [...ids, jobId];
+            }
+        },
+        removeSavedJobId: (state, action) => {
+            const jobId = action.payload?.toString();
+            state.savedJobIds = (state.savedJobIds ?? []).filter(
+                (id) => id?.toString() !== jobId,
+            );
+            state.savedJobs = (state.savedJobs ?? []).filter(
+                (job) => job._id?.toString() !== jobId,
+            );
+        },
 
 
 
@@ -37,6 +63,6 @@ const jobSlice = createSlice({
 });
 
 
-export const { setAllJobs, setSingleJob, setAllAdminJobs, setSearchJobByText, setAllAppliedJobs, setSearchedQuery } = jobSlice.actions;
+export const { setAllJobs, setSingleJob, setAllAdminJobs, setSearchJobByText, setAllAppliedJobs, setSearchedQuery, setSavedJobs, setSavedJobIds, addSavedJobId, removeSavedJobId } = jobSlice.actions;
 
 export default jobSlice.reducer;

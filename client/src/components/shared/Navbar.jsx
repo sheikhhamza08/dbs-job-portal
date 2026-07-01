@@ -4,6 +4,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import {
+  Bookmark,
   BriefcaseBusiness,
   BuildingIcon,
   GraduationCap,
@@ -18,11 +19,13 @@ import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { setUser } from "@/redux/authSlice";
 import { setSearchedQuery } from "@/redux/jobSlice";
+import useGetSavedJobs from "@/hooks/useGetSavedJobs";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { user } = useSelector((store) => store.auth);
+  useGetSavedJobs();
 
   const logoutHandler = async () => {
     try {
@@ -85,6 +88,11 @@ const Navbar = () => {
                 <li>
                   <Link className={navLinkClass} to="/jobs">
                     Jobs
+                  </Link>
+                </li>
+                <li>
+                  <Link className={navLinkClass} to="/saved-jobs">
+                    Saved Jobs
                   </Link>
                 </li>
                 <li>
@@ -203,6 +211,13 @@ const Navbar = () => {
                     >
                       <BriefcaseBusiness className="h-5 w-5" />
                       Jobs
+                    </button>
+                    <button
+                      onClick={() => navigate("/saved-jobs")}
+                      className="flex items-center gap-3"
+                    >
+                      <Bookmark className="h-5 w-5" />
+                      Saved Jobs
                     </button>
                     <button
                       onClick={() => {

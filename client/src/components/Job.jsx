@@ -1,10 +1,10 @@
 import React from "react";
 import { Button } from "./ui/button";
-import { Bookmark } from "lucide-react";
 import { Avatar, AvatarImage } from "./ui/avatar";
 import { Badge } from "./ui/badge";
 import { useNavigate } from "react-router-dom";
 import { MapPin } from "lucide-react";
+import SaveJobButton from "./SaveJobButton";
 
 const Job = ({ job }) => {
   const navigate = useNavigate();
@@ -25,9 +25,7 @@ const Job = ({ job }) => {
             ? "Today"
             : `${daysAgoFunction(job?.createdAt)} days ago`}
         </p>
-        <Button variant="outline" className="rounded-full" size="icon">
-          <Bookmark className="h-4 w-4" />
-        </Button>
+        <SaveJobButton jobId={job._id} iconOnly />
       </div>
 
       <div className="flex gap-3 items-center my-3">
@@ -75,9 +73,7 @@ const Job = ({ job }) => {
         >
           Details
         </Button>
-        <Button className="bg-[#002855] hover:bg-[#1a4480] cursor-pointer flex-1">
-          Save
-        </Button>
+        <SaveJobButton jobId={job._id} className="flex-1" />
       </div>
     </div>
   );

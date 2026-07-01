@@ -8,8 +8,11 @@ import { APPLICANT_API_END_POINT, JOB_API_END_POINT } from "@/utils/constant";
 import { setSingleJob } from "@/redux/jobSlice";
 import { toast } from "sonner";
 import Navbar from "./shared/Navbar";
+import SaveJobButton from "./SaveJobButton";
+import useGetSavedJobs from "@/hooks/useGetSavedJobs";
 
 const JobDescription = () => {
+  useGetSavedJobs();
   const dispatch = useDispatch();
   const { singleJob } = useSelector((state) => state.job);
   const { user } = useSelector((state) => state.auth);
@@ -94,13 +97,16 @@ const JobDescription = () => {
               </Badge>
             </div>
           </div>
-          <Button
-            onClick={isApplied ? null : applyJobHandler}
-            disabled={isApplied}
-            className={`rounded-lg ${isApplied ? "bg-gray-400 cursor-not-allowed" : "bg-[#002855] hover:bg-[#1a4480] cursor-pointer"} `}
-          >
-            {isApplied ? "Applied" : "Apply Now"}
-          </Button>
+          <div className="flex items-center gap-3">
+            <SaveJobButton jobId={jobId} />
+            <Button
+              onClick={isApplied ? null : applyJobHandler}
+              disabled={isApplied}
+              className={`rounded-lg ${isApplied ? "bg-gray-400 cursor-not-allowed" : "bg-[#002855] hover:bg-[#1a4480] cursor-pointer"} `}
+            >
+              {isApplied ? "Applied" : "Apply Now"}
+            </Button>
+          </div>
         </div>
         <div className="">
           <h1 className="border-b-2 border-b-gray-300 font-medium py-4">
