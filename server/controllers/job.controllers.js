@@ -103,7 +103,7 @@ export const getJobById = async (req, res) => {
       path: "applications",
     });
     if (!job) {
-      res.status(404).json({
+      return res.status(404).json({
         message: "Job not found",
         success: false,
       });
@@ -116,6 +116,10 @@ export const getJobById = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false,
+    });
   }
 };
 

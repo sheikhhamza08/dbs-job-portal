@@ -12,7 +12,7 @@ import useGetAllJobs from '@/hooks/useGetAllJobs'
 const filterData = [
     {
         filterType: "Location",
-        array: ["Delhi NCR", "Bengluru", "Mumbai", "Hyderabad", "Ranchi", "Patna"]
+        array: ["Dublin", "Cork", "Galway", "Limerick", "Waterford", "Kilkenny"]
     },
     {
         filterType: "Industry",
@@ -20,7 +20,7 @@ const filterData = [
     },
     {
         filterType: "Salary",
-        array: ["6-10 LPA", "10-40 LPA", "40-100 LPA" ,"100+"]
+        array: ["€30k-€50k", "€50k-€70k", "€70k-€100k", "€100k+"]
     }
 ]
 
