@@ -3,7 +3,7 @@ import Navbar from "../shared/Navbar";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { USER_API_END_POINT } from "@/utils/constant";
 import { toast } from "sonner";
@@ -13,8 +13,12 @@ import { GraduationCap, Loader2 } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const { loading, user } = useSelector((store) => store.auth);
+  const redirectPath =
+    location.state?.from?.pathname ||
+    (user?.role === "recruiter" ? "/admin/companies" : "/");
 
   const [input, setInput] = useState({
     email: "",
@@ -36,7 +40,11 @@ const Login = () => {
       });
       if (response.data.success) {
         dispatch(setUser(response.data.user));
-        navigate(response.data.user.role === "recruiter" ? "/admin/companies" : "/");
+        const from = location.state?.from?.pathname;
+        const destination =
+          from ||
+          (response.data.user.role === "recruiter" ? "/admin/companies" : "/");
+        navigate(destination, { replace: true });
         toast.success(response.data.message);
       }
     } catch (error) {
@@ -47,8 +55,8 @@ const Login = () => {
   };
 
   useEffect(() => {
-    if (user) navigate("/");
-  }, []);
+    if (user) navigate(redirectPath, { replace: true });
+  }, [user, navigate, redirectPath]);
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">

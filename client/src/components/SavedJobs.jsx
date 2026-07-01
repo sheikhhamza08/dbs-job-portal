@@ -50,22 +50,7 @@ const SavedJobs = () => {
           Jobs you've bookmarked to review later
         </p>
 
-        {!user ? (
-          <div className="text-center py-16 bg-white rounded-2xl border">
-            <p className="text-muted-foreground mb-4">
-              Login to view your saved jobs
-            </p>
-            <Link to="/login">
-              <Button className="bg-[#002855] hover:bg-[#1a4480]">Login</Button>
-            </Link>
-          </div>
-        ) : user.role !== "student" ? (
-          <div className="text-center py-16 bg-white rounded-2xl border">
-            <p className="text-muted-foreground">
-              Saved jobs are available for student accounts only.
-            </p>
-          </div>
-        ) : savedJobs.length === 0 ? (
+        {savedJobs.length === 0 ? (
           <div className="text-center py-16 bg-white rounded-2xl border">
             <Bookmark className="h-12 w-12 text-gray-300 mx-auto mb-4" />
             <p className="text-muted-foreground mb-4">No saved jobs yet</p>

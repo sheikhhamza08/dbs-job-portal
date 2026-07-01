@@ -90,11 +90,13 @@ const Navbar = () => {
                     Jobs
                   </Link>
                 </li>
-                <li>
-                  <Link className={navLinkClass} to="/saved-jobs">
-                    Saved Jobs
-                  </Link>
-                </li>
+                {user?.role === "student" && (
+                  <li>
+                    <Link className={navLinkClass} to="/saved-jobs">
+                      Saved Jobs
+                    </Link>
+                  </li>
+                )}
                 <li>
                   <Link
                     className={navLinkClass}
@@ -212,13 +214,15 @@ const Navbar = () => {
                       <BriefcaseBusiness className="h-5 w-5" />
                       Jobs
                     </button>
-                    <button
-                      onClick={() => navigate("/saved-jobs")}
-                      className="flex items-center gap-3"
-                    >
-                      <Bookmark className="h-5 w-5" />
-                      Saved Jobs
-                    </button>
+                    {user?.role === "student" && (
+                      <button
+                        onClick={() => navigate("/saved-jobs")}
+                        className="flex items-center gap-3"
+                      >
+                        <Bookmark className="h-5 w-5" />
+                        Saved Jobs
+                      </button>
+                    )}
                     <button
                       onClick={() => {
                         navigate("/browse");

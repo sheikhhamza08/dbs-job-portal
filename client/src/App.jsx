@@ -15,7 +15,7 @@ import CompanySetup from './components/admin/CompanySetup'
 import AdminJobs from './components/admin/AdminJobs'
 import PostJob from './components/admin/PostJob'
 import JobApplicants from './components/admin/JobApplicants'
-import ProtectedRoute from './components/admin/ProtectedRoute'
+import PrivateRoute from './components/shared/PrivateRoute'
 
 const appRouter = createBrowserRouter([
 
@@ -48,38 +48,38 @@ const appRouter = createBrowserRouter([
   },
   {
     path: "/profile",
-    element: <Profile />
+    element: <PrivateRoute><Profile /></PrivateRoute>
   },
   {
     path: "/saved-jobs",
-    element: <SavedJobs />
+    element: <PrivateRoute allowedRoles={["student"]}><SavedJobs /></PrivateRoute>
   },
 
 
   // for admin role
   {
     path: "/admin/companies",
-    element: <ProtectedRoute><Companies /></ProtectedRoute>
+    element: <PrivateRoute allowedRoles={["recruiter"]}><Companies /></PrivateRoute>
   },
   {
     path: "/admin/companies/create",
-    element: <ProtectedRoute><CompanyCreate /></ProtectedRoute>
+    element: <PrivateRoute allowedRoles={["recruiter"]}><CompanyCreate /></PrivateRoute>
   },
   {
     path: "/admin/companies/:id",
-    element: <ProtectedRoute><CompanySetup /></ProtectedRoute>
+    element: <PrivateRoute allowedRoles={["recruiter"]}><CompanySetup /></PrivateRoute>
   },
   {
     path: "/admin/jobs",
-    element: <ProtectedRoute><AdminJobs /></ProtectedRoute>
+    element: <PrivateRoute allowedRoles={["recruiter"]}><AdminJobs /></PrivateRoute>
   },
   {
     path: "/admin/jobs/create",
-    element: <ProtectedRoute><PostJob /></ProtectedRoute>
+    element: <PrivateRoute allowedRoles={["recruiter"]}><PostJob /></PrivateRoute>
   },
   {
     path: "/admin/jobs/:id/applicants",
-    element: <ProtectedRoute><JobApplicants /></ProtectedRoute>
+    element: <PrivateRoute allowedRoles={["recruiter"]}><JobApplicants /></PrivateRoute>
   },
 
 
