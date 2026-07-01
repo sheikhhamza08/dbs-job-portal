@@ -1,67 +1,78 @@
-import React, { useState } from 'react'
-import { Input } from './ui/input'
-import { Search } from 'lucide-react'
-import { Button } from './ui/button'
-import { useDispatch } from 'react-redux';
-import { setSearchedQuery } from '@/redux/jobSlice';
-import { useNavigate } from 'react-router-dom';
-import { motion } from "framer-motion"
+import React, { useState } from "react";
+import { Search, MapPin, Sparkles } from "lucide-react";
+import { Button } from "./ui/button";
+import { useDispatch } from "react-redux";
+import { setSearchedQuery } from "@/redux/jobSlice";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 function HeroSection() {
+  const [query, setQuery] = useState("");
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const [query, setQuery] = useState("");
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  const searchJobHandler = () => {
+    dispatch(setSearchedQuery(query));
+    navigate("/browse");
+  };
 
-    const searchJobHandler = () => {
-        dispatch(setSearchedQuery(query));
-        navigate("/browse");
-    }
+  return (
+    <section className="dbs-hero-pattern text-white px-[5%] lg:px-[10%] pt-16 pb-24">
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="max-w-4xl mx-auto text-center"
+      >
+        <span className="inline-flex items-center gap-2 mx-auto px-4 py-2 rounded-full bg-white/10 border border-white/20 text-[#c5a572] text-sm font-medium mb-6">
+          <Sparkles className="h-4 w-4" />
+          Dublin Business School Careers Portal
+        </span>
 
-    return (
-        <motion.div
-            initial={{ opacity: 0.2, y: 100 }}
-            transition={{ duration: 1 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{}}
-            className='text-center'
-        >
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2, duration: 0.8 }}
-                className='flex flex-col gap-5 my-10'>
-                <span className='mx-auto px-4 py-2 rounded-full bg-gray-100 text-[#F83002] font-medium'>No. 1 Job Hunt Website</span>
-                {/* <p>/ your dream job today!</p> */}
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight">
+          Launch your career
+          <span className="block text-[#c5a572]">across Ireland</span>
+        </h1>
 
-                <motion.h1
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.4, duration: 2 }}
-                    className='sm:text-4xl lg:text-5xl font-bold'>Search, Apply & <br /> Get Your <span className='text-[#6A38C2] hover:text-[#6c38c0eb] cursor-pointer' onClick={() => navigate("/browse")} >Dream Jobs</span></motion.h1>
-                <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                    className='px-3 text-gray-700'>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Accusantium harum officiis id at impedit.</motion.p>
-                <div className='flex sm:w-[40%] shadow-lg border border-gray-200 pl-3 rounded-full items-center gap-4 mx-auto'>
-                    <input type="text"
-                        placeholder='Find your dream jobs'
-                        className='outline-none border-none w-full'
-                        value={query}
-                        onChange={(e) => setQuery(e.target.value)}
-                    />
-                    <Button onClick={searchJobHandler} className='rounded-r-full bg-[#6A38C2] cursor-pointer'>
-                        <Search
-                            className='h-5 w-5'
-                        />
-                    </Button>
-                </div>
-            </motion.div>
+        <p className="mt-6 text-lg text-white/80 max-w-2xl mx-auto">
+          Discover graduate roles, internships, and employer partnerships curated
+          for DBS students — from Dublin to Galway, Cork to Limerick.
+        </p>
 
+        <div className="mt-10 flex flex-col sm:flex-row max-w-2xl mx-auto bg-white rounded-2xl shadow-2xl overflow-hidden p-2 gap-2">
+          <div className="flex items-center flex-1 px-4 gap-3">
+            <Search className="h-5 w-5 text-[#002855]/50 shrink-0" />
+            <input
+              type="text"
+              placeholder="Job title, skill, or keyword..."
+              className="outline-none w-full text-[#002855] placeholder:text-gray-400 py-3"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && searchJobHandler()}
+            />
+          </div>
+          <Button
+            onClick={searchJobHandler}
+            className="bg-[#002855] hover:bg-[#1a4480] text-white rounded-xl px-8 py-6 cursor-pointer"
+          >
+            Search Jobs
+          </Button>
+        </div>
 
-        </motion.div>
-    )
+        <div className="mt-6 flex flex-wrap justify-center gap-3 text-sm text-white/70">
+          <span className="flex items-center gap-1">
+            <MapPin className="h-4 w-4" /> Dublin
+          </span>
+          <span>•</span>
+          <span>Cork</span>
+          <span>•</span>
+          <span>Galway</span>
+          <span>•</span>
+          <span>Remote & Hybrid</span>
+        </div>
+      </motion.div>
+    </section>
+  );
 }
 
-export default HeroSection
+export default HeroSection;

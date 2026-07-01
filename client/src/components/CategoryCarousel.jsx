@@ -1,58 +1,80 @@
-import React, { useState } from 'react'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel'
-import { Button } from './ui/button'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { setSearchedQuery } from '@/redux/jobSlice'
-import { motion } from "framer-motion"
-
-
-const category = [
-    "Frontend Developer",
-    "Backend Developer",
-    "Data Science",
-    "Graphic Designer",
-    "Full Stack Developer",
-    "DevOps Engineer",
-    "Cyber Security ",
-]
+import React, { useEffect, useState } from "react";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "./ui/carousel";
+import { Button } from "./ui/button";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setSearchedQuery } from "@/redux/jobSlice";
+import { motion } from "framer-motion";
+import axios from "axios";
+import { JOB_API_END_POINT } from "@/utils/constant";
 
 function CategoryCarousel() {
+  const [categories, setCategories] = useState([]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(`${JOB_API_END_POINT}/categories`);
+        if (response.data.success) {
+          setCategories(response.data.categories);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
+  const searchJobHandler = (query) => {
+    dispatch(setSearchedQuery(query));
+    navigate("/browse");
+  };
 
-    const searchJobHandler = (query) => {
-        dispatch(setSearchedQuery(query));
-        navigate("/browse");
-    }
+  return (
+    <motion.section
+      initial={{ opacity: 0, y: 40 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+      className="px-[5%] lg:px-[10%] my-16"
+    >
+      <h2 className="text-2xl sm:text-3xl font-bold text-[#002855] text-center mb-2">
+        Explore by Role
+      </h2>
+      <p className="text-center text-muted-foreground mb-8">
+        Popular categories for DBS graduates
+      </p>
 
-
-    return (
-        <motion.div
-        initial={{ opacity: 0.2, y: 100 }}
-        transition={{ duration: 1 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{}}
-        >
-            <Carousel className="w-full max-sm:max-w-[234px] sm:max-w-xl mx-auto my-10">
-                <CarouselContent>
-                    {
-                        category.map((cat, index) => (
-                            <CarouselItem key={index} className="basis-[60%] sm:basis-1/2 md:basis-1/3 lg:basis-1/4 ">
-                                <Button onClick={() => searchJobHandler(cat)} variant="outline" className="rounded-full cursor-pointer hover:scale-105 duration-600 transition-all">
-                                    {cat}
-                                </Button>
-                            </CarouselItem>
-                        ))
-                    }
-                </CarouselContent>
-                <CarouselPrevious />
-                <CarouselNext />
-            </Carousel>
-        </motion.div>
-    )
+      <Carousel className="w-full max-w-4xl mx-auto">
+        <CarouselContent>
+          {categories.map((cat) => (
+            <CarouselItem
+              key={cat}
+              className="basis-auto pl-3"
+            >
+              <Button
+                onClick={() => searchJobHandler(cat)}
+                variant="outline"
+                className="rounded-full cursor-pointer border-[#002855]/20 text-[#002855] hover:bg-[#002855] hover:text-white transition-all duration-300 whitespace-nowrap"
+              >
+                {cat}
+              </Button>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious className="hidden sm:flex" />
+        <CarouselNext className="hidden sm:flex" />
+      </Carousel>
+    </motion.section>
+  );
 }
 
-export default CategoryCarousel
+export default CategoryCarousel;
