@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import Navbar from './shared/Navbar'
 import Footer from './shared/Footer'
 import Job from './Job'
 import { useDispatch, useSelector } from 'react-redux'
 import { setSearchedQuery } from '@/redux/jobSlice'
 import useGetAllJobs from '@/hooks/useGetAllJobs'
+import { filterJobsByQuery } from '@/utils/jobFilters'
 import { motion } from "framer-motion"
 
 // const jobs = [
@@ -14,9 +15,14 @@ import { motion } from "framer-motion"
 const Browse = () => {
 
     useGetAllJobs();
-    const { allJobs } = useSelector(store => store.job)
+    const { allJobs, searchedQuery } = useSelector(store => store.job)
 
     const dispatch = useDispatch();
+
+    const filteredJobs = useMemo(
+        () => filterJobsByQuery(allJobs, searchedQuery),
+        [allJobs, searchedQuery]
+    );
 
     useEffect(() => {
 
@@ -38,10 +44,10 @@ const Browse = () => {
                     transition={{ duration: 1 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{}}
-                    className='font-bold text-xl my-10'>Search Results ({allJobs.length})</motion.h1>
+                    className='font-bold text-xl my-10'>Search Results ({filteredJobs.length})</motion.h1>
 
                 {
-                    allJobs.length <= 0 &&
+                    filteredJobs.length <= 0 &&
                     <div className='text-gray-500 hover:text-gray-400 text-xl flex justify-center'>
                         <p className='text-center'>No Jobs Found!</p>
                     </div>
@@ -55,7 +61,7 @@ const Browse = () => {
                     className=' overflow-y-auto pb-5'>
                     <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 '>
                         {
-                            allJobs.map((job) => {
+                            filteredJobs.map((job) => {
                                 return (
                                     <Job key={job._id} job={job} />
                                 )

@@ -4,25 +4,7 @@ import { Label } from './ui/label'
 import { useDispatch } from 'react-redux'
 import { setSearchedQuery } from '@/redux/jobSlice'
 import useGetAllJobs from '@/hooks/useGetAllJobs'
-
-// location
-// salary
-// job types
-
-const filterData = [
-    {
-        filterType: "Location",
-        array: ["Dublin", "Cork", "Galway", "Limerick", "Waterford", "Kilkenny"]
-    },
-    {
-        filterType: "Industry",
-        array: ["Frontend Developer", "Backend Developer", "Full Stack Developer", "Data Scientist", "Machine Learning"]
-    },
-    {
-        filterType: "Salary",
-        array: ["€30k-€50k", "€50k-€70k", "€70k-€100k", "€100k+"]
-    }
-]
+import { JOB_FILTER_OPTIONS } from '@/utils/jobFilters'
 
 
 const FilterCard = () => {
@@ -48,14 +30,14 @@ const FilterCard = () => {
 
             <RadioGroup value={selectedValue} onValueChange={changeHandler}>
                 {
-                    filterData.map((data, index) => (
-                        <div key={index}>
+                    JOB_FILTER_OPTIONS.map((data, index) => (
+                        <div key={data.filterType}>
                             <h1 className='font-bold text-lg'>{data.filterType}</h1>
                             {
                                 data.array.map((item, idx) => {
-                                    const itemId = `r${index - idx}`
+                                    const itemId = `${data.filterType}-${idx}`
                                     return (
-                                        <div className='flex items-center spac-x-2 gap-1 my-2' key={idx}>
+                                        <div className='flex items-center spac-x-2 gap-1 my-2' key={itemId}>
                                             <RadioGroupItem value={item} id={itemId} />
                                             <Label className="text-base/5" htmlFor={itemId}>{item}</Label>
                                         </div>

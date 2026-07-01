@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import useGetAllJobs from '@/hooks/useGetAllJobs'
 import { setSearchedQuery } from '@/redux/jobSlice'
+import { filterJobsByQuery } from '@/utils/jobFilters'
 import { Button } from './ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
 import { Avatar, AvatarImage } from './ui/avatar'
@@ -32,21 +33,7 @@ function Jobs() {
 
     useEffect(() => {
 
-        if (searchedQuery) {
-            const filteredJob = allJobs.filter((job) => {
-                return job?.title.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job?.description.toLowerCase().includes(searchedQuery.toLowerCase()) ||
-                    job?.location.toLowerCase().includes(searchedQuery.toLowerCase())
-                // job?.company.toLowerCase().includes(searchedQuery.toLowerCase())
-            })
-            setFilterJobs(filteredJob)
-            // dispatch(setSearchedQuery(""));
-
-
-        }
-        else {
-            setFilterJobs(allJobs)
-        }
+        setFilterJobs(filterJobsByQuery(allJobs, searchedQuery))
 
     }, [allJobs, searchedQuery])
 
