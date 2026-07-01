@@ -1,15 +1,31 @@
+import path from "path";
+
 /**
- * PDFs must use Cloudinary "raw" delivery. Uploads saved under /image/upload/
- * break in the browser PDF viewer ("Failed to load PDF document").
+ * PDFs must use Cloudinary "raw" delivery, not /image/upload/.
  */
 export const normalizeResumeUrl = (url) => {
   if (!url || typeof url !== "string") return url;
 
-  if (/\.pdf(\?|#|$)/i.test(url) && url.includes("/image/upload/")) {
-    return url.replace("/image/upload/", "/raw/upload/");
+  let fixed = url;
+
+  // Remove fl_inline / fl_attachment — they return HTTP 400 on raw PDFs
+  fixed = fixed.replace(/\/fl_(inline|attachment):[^/]+\//, "/");
+
+  if (fixed.includes("/image/upload/")) {
+    fixed = fixed.replace("/image/upload/", "/raw/upload/");
   }
 
-  return url;
+  const pathWithoutQuery = fixed.split("?")[0];
+
+  // Legacy raw uploads saved without a .pdf suffix
+  if (
+    fixed.includes("/raw/upload/") &&
+    !/\.pdf(\?|#|$)/i.test(pathWithoutQuery)
+  ) {
+    fixed = `${fixed}.pdf`;
+  }
+
+  return fixed;
 };
 
 export const uploadResumeToCloudinary = async (cloudinary, fileUri, file) => {
@@ -18,11 +34,15 @@ export const uploadResumeToCloudinary = async (cloudinary, fileUri, file) => {
     file.originalname?.toLowerCase().endsWith(".pdf");
 
   if (isPdf) {
+    const baseName =
+      path.basename(file.originalname, path.extname(file.originalname)) ||
+      "resume";
+    const safeName = baseName.replace(/[^a-zA-Z0-9-_]/g, "_").slice(0, 40);
+
     return cloudinary.uploader.upload(fileUri.content, {
       resource_type: "raw",
       folder: "user-resumes",
-      use_filename: true,
-      unique_filename: true,
+      public_id: `${safeName}_${Date.now()}.pdf`,
       access_mode: "public",
     });
   }

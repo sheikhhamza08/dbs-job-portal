@@ -67,6 +67,10 @@ const JobApplicantsTable = () => {
                     <a
                       className="hover:text-[#002855] cursor-pointer font-medium"
                       href={getResumeUrl(item.applicant?.profile?.resume)}
+                      download={
+                        item.applicant?.profile?.resumeOriginalName ||
+                        "resume.pdf"
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                     >

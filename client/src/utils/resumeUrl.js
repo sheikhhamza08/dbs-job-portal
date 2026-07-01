@@ -1,12 +1,25 @@
 /**
- * Fix legacy Cloudinary resume URLs (PDFs uploaded under /image/upload/).
+ * Normalize Cloudinary resume URLs for raw PDF delivery.
  */
 export const getResumeUrl = (url) => {
   if (!url || typeof url !== "string") return url;
 
-  if (/\.pdf(\?|#|$)/i.test(url) && url.includes("/image/upload/")) {
-    return url.replace("/image/upload/", "/raw/upload/");
+  let fixed = url;
+
+  fixed = fixed.replace(/\/fl_(inline|attachment):[^/]+\//, "/");
+
+  if (fixed.includes("/image/upload/")) {
+    fixed = fixed.replace("/image/upload/", "/raw/upload/");
   }
 
-  return url;
+  const pathWithoutQuery = fixed.split("?")[0];
+
+  if (
+    fixed.includes("/raw/upload/") &&
+    !/\.pdf(\?|#|$)/i.test(pathWithoutQuery)
+  ) {
+    fixed = `${fixed}.pdf`;
+  }
+
+  return fixed;
 };

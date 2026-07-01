@@ -95,6 +95,7 @@ function Profile() {
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
+                  download={user?.profile?.resumeOriginalName || "resume.pdf"}
                   href={getResumeUrl(user?.profile?.resume)}
                   className="text-[#002855] w-full hover:underline cursor-pointer font-medium"
                 >
